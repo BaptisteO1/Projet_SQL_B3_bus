@@ -38,9 +38,7 @@ Prérequis: avoir installé MySQL
     ```bash
     mysql -u username -p < queries.sql
 
+## Conception
 
-
-
-
-
-
+**Conception MCD**
+    ![MCD](img/MCD.png)

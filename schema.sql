@@ -1,33 +1,23 @@
--- CREATE DATABASE IF NOT EXISTS 'UrbanTransit_EvalSQL1';
+ DROP DATABASE IF EXISTS `UrbanTransit_EvalSQL1`;
+ CREATE DATABASE IF NOT EXISTS `UrbanTransit_EvalSQL1`;
 
--- USE 'UrbanTransit_EvalSQL1';
-ALTER TABLE `Direction` DROP FOREIGN KEY Direction_ibfk_1;
-ALTER TABLE `departure_time` DROP FOREIGN KEY departure_time_ibfk_1;
-ALTER TABLE `departure_time` DROP FOREIGN KEY departure_time_ibfk_2;
+ USE `UrbanTransit_EvalSQL1`;
+
 -- Suppression des tables si elles existent déjà
-DROP TABLE IF EXISTS `Lines`;
-DROP TABLE IF EXISTS `Direction`;
-DROP TABLE IF EXISTS `Stations`;
+DROP TABLE IF EXISTS `lines`;
+DROP TABLE IF EXISTS `stations`;
 DROP TABLE IF EXISTS `departure_time`;
+DROP TABLE IF EXISTS `redirections`;
 
 
 -- Création de la table Line
-CREATE TABLE `Lines` (
+CREATE TABLE `lines` (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name_line VARCHAR(255) NOT NULL,
-    number_line INT NOT NULL
-);
-
--- Création de la table Direction
-CREATE TABLE `Direction` (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name_direction VARCHAR(255) NOT NULL,
-    id_line INT NOT NULL,
-    FOREIGN KEY (id_line) REFERENCES `Lines`(id)
+    name_line VARCHAR(255) NOT NULL
 );
 
 -- Création de la table Station
-CREATE TABLE `Stations` (
+CREATE TABLE `stations` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name_station VARCHAR(255) NOT NULL
 );
@@ -35,10 +25,22 @@ CREATE TABLE `Stations` (
 -- Création de la table departure_time
 CREATE TABLE `departure_time` (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_direction INT NOT NULL,
+    id_line INT NOT NULL,
     id_station INT NOT NULL,
     departure_time TIME NOT NULL,
-    FOREIGN KEY (id_direction) REFERENCES `Direction`(id),
-    FOREIGN KEY (id_station) REFERENCES `Stations`(id)
+    `day` ENUM('Lundi', 'Mardi') NOT NULL,
+    FOREIGN KEY (id_line) REFERENCES `lines`(id),
+    FOREIGN KEY (id_station) REFERENCES `stations`(id)
 );
 
+-- 3.
+-- Création de la table Redirection
+CREATE TABLE `redirections` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_line INT NOT NULL,
+    id_unserved_station INT NOT NULL,
+    id_nearest_station INT NOT NULL,
+    FOREIGN KEY (id_line) REFERENCES `lines`(id),
+    FOREIGN KEY (id_unserved_station) REFERENCES `stations`(id),
+    FOREIGN KEY (id_nearest_station) REFERENCES `stations`(id)
+);
